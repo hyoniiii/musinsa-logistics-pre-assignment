@@ -1,0 +1,36 @@
+service: musinsa-serverless
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.8
+  region: ap-northeast-2
+
+constructs:
+  deliver:
+    type: queue
+    worker:
+      handler: handler.delivers
+      environment:
+        QUEUE_URL: ${construct:result.queueUrl}
+  result:
+    type: queue
+    worker:
+      handler: handler.results
+
+functions:
+  return:
+    handler: handler.returns
+    events:
+      - schedule: rate(1 minute)
+    environment:
+      QUEUE_URL: ${construct:deliver.queueUrl}
+
+
+plugins:
+  - serverless-lift
+
+
+package:
+  patterns:
+    - '!node_modules/**'
