@@ -25,32 +25,32 @@ constructs:
   deliver:
     type: queue
     worker:
-      handler: delivers.handler
+      handler: functions/delivers.handler
       layers:
         - { Ref: PythonLambdaLayer }
       environment:
         QUEUE_URL: ${construct:result.queueUrl}
       package:
         patterns:
-          - '!results.py'
-          - '!returns.py'
+          - '!functions/results.py'
+          - '!functions/returns.py'
 
   result:
     type: queue
     worker:
-      handler: results.handler
+      handler: functions/results.handler
       layers:
         - { Ref: PythonLambdaLayer }
       environment:
         QUEUE_URL: ${construct:result.queueUrl}
       package:
         patterns:
-          - '!returns.py'
-          - '!delivers.py'
+          - '!functions/returns.py'
+          - '!functions/delivers.py'
 
 functions:
   return:
-    handler: returns.handler
+    handler: functions/returns.handler
     layers:
       - { Ref: PythonLambdaLayer }
     # events:
@@ -59,8 +59,8 @@ functions:
       QUEUE_URL: ${construct:deliver.queueUrl}
     package:
       patterns:
-        - '!results.py'
-        - '!delivers.py'
+        - '!functions/results.py'
+        - '!functions/delivers.py'
 
 plugins:
   - serverless-lift
