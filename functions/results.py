@@ -10,14 +10,14 @@ logger.setLevel(logging.DEBUG)
 
 QUEUE_URL = os.getenv('QUEUE_URL')
 TOKEN = os.getenv('TOKEN')
-URL = os.getenv('Base_URL')
+BASE_URL = os.getenv('BASE_URL')
 SQS = boto3.client('sqs')
 HEADER = {
     'Authorization': 'Bearer ' + TOKEN
 }
 
 def results(event, context):
-    url = URL + "/results"
+    url = BASE_URL + "/results"
     headers = HEADER
     data = {
         'order_number': event['body']['Attribute']['order_number'],

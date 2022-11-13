@@ -10,19 +10,35 @@ logger.setLevel(logging.DEBUG)
 
 QUEUE_URL = os.getenv('QUEUE_URL')
 TOKEN = os.getenv('TOKEN')
-URL = os.getenv('Base_URL')
+BASE_URL = os.getenv('BASE_URL')
+SLACK_URL = os.getenv('SLACK_URL')
 SQS = boto3.client('sqs')
 HEADER = {
     'Authorization': 'Bearer ' + TOKEN
 }
 
-def handler(event, context):
-    url = URL + "/tracking?shipment_number=" + \
+
+def slack_message(error):
+    url = SLACK_URL
+    data = {
+        "text": error
+    }
+    response = requests.post(url, json=data)
+    return response
+
+
+def send_msg(event, context):
+    url = BASE_URL + "/tracking?shipment_number=" + \
         event['body']['Attribute']['shipment_number']
     headers = HEADER
-    m_body = str(event['body'])
     response = requests.get(url, headers=headers)
-    res = response.json()
+    return response.json()
+
+
+def handler(event, context):
+    m_body = str(event['body'])
+
+    res = send_msg(event, context)
 
     for post in res['data']:
         if post['return_status'] == 'delivered':
@@ -30,3 +46,7 @@ def handler(event, context):
                 QueueUrl=QUEUE_URL,
                 MessageBody=m_body
             )
+
+    # if res['data'] == []:
+    slack_message('No return found for shipment number ' +
+                  event['body']['Attribute']['shipment_number'])
