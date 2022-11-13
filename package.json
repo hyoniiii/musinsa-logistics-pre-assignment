@@ -5,9 +5,7 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "serverless-dotenv-plugin": "^4.0.2",
     "serverless-lift": "^1.1.2"
-  },
-  "dependencies": {
-    "serverless-plugin-lambda-dead-letter": "^1.2.1"
   }
 }

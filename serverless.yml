@@ -1,6 +1,16 @@
 service: musinsa-serverless
 frameworkVersion: '3'
 
+package:
+  individually: true
+  patterns:
+    - '!node_modules/**'
+    - '!python/**'
+    - '!python.zip'
+    - '!package-lock.json'
+    - '!package.json'
+    - '!README.md'
+
 provider:
   name: aws
   runtime: python3.8
@@ -15,40 +25,43 @@ constructs:
   deliver:
     type: queue
     worker:
-      handler: handler.delivers
+      handler: delivers.handler
       layers:
         - { Ref: PythonLambdaLayer }
       environment:
         QUEUE_URL: ${construct:result.queueUrl}
+      package:
+        patterns:
+          - '!results.py'
+          - '!returns.py'
+
   result:
     type: queue
     worker:
-      handler: handler.results
+      handler: results.handler
       layers:
         - { Ref: PythonLambdaLayer }
       environment:
         QUEUE_URL: ${construct:result.queueUrl}
+      package:
+        patterns:
+          - '!returns.py'
+          - '!delivers.py'
 
 functions:
   return:
-    handler: handler.returns
+    handler: returns.handler
     layers:
       - { Ref: PythonLambdaLayer }
     # events:
     #   - schedule: rate(1 minute)
     environment:
       QUEUE_URL: ${construct:deliver.queueUrl}
-
+    package:
+      patterns:
+        - '!results.py'
+        - '!delivers.py'
 
 plugins:
   - serverless-lift
-
-
-package:
-  patterns:
-    - '!node_modules/**'
-    - '!python/**'
-    - '!python.zip'
-    - '!package-lock.json'
-    - '!package.json'
-    - '!README.md'
+  - serverless-dotenv-plugin
