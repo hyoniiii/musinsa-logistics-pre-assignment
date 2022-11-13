@@ -6,23 +6,36 @@ provider:
   runtime: python3.8
   region: ap-northeast-2
 
+layers:
+  python:
+    package:
+      artifact: python.zip
+
 constructs:
   deliver:
     type: queue
     worker:
       handler: handler.delivers
+      layers:
+        - { Ref: PythonLambdaLayer }
       environment:
         QUEUE_URL: ${construct:result.queueUrl}
   result:
     type: queue
     worker:
       handler: handler.results
+      layers:
+        - { Ref: PythonLambdaLayer }
+      environment:
+        QUEUE_URL: ${construct:result.queueUrl}
 
 functions:
   return:
     handler: handler.returns
-    events:
-      - schedule: rate(1 minute)
+    layers:
+      - { Ref: PythonLambdaLayer }
+    # events:
+    #   - schedule: rate(1 minute)
     environment:
       QUEUE_URL: ${construct:deliver.queueUrl}
 
@@ -34,3 +47,8 @@ plugins:
 package:
   patterns:
     - '!node_modules/**'
+    - '!python/**'
+    - '!python.zip'
+    - '!package-lock.json'
+    - '!package.json'
+    - '!README.md'
