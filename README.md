@@ -93,5 +93,5 @@ sls remove
 <img width="2013" alt="image" src="https://user-images.githubusercontent.com/97004730/201528576-def97c6a-96d6-476b-8047-ac6c96f3a5f1.png">
 
 #### 4. 서버 내 발생된 이벤트의 Alert 송신(Slack)
-https://github.com/hyoniiii/musinsa-task/blob/3881858faa781a4348d6963b604cbe7322e3571f/functions/delivers.py#L21-L52
+https://github.com/hyoniiii/musinsa-logistics-pre-assignment/blob/bb2f285029eadda099e631430fb4c0534c2efffb/functions/delivers.py#L21-L52
 ![image](https://user-images.githubusercontent.com/97004730/201528585-44d07995-2d30-459f-95da-54d11651aa1e.png)
