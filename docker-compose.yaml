@@ -1,0 +1,26 @@
+services:
+  db:
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: musinsa
+    volumes:
+      - ./db/mongodb-data:/data/db
+      - ./db/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+
+  app:
+    build: src
+    restart: always
+    environment:
+      MONGO_URL: "mongodb://root:example@db:27017/"
+      DATABASE: "musinsa"
+      COLLECTION: "returns"
+      TOKEN: ${TOKEN}
+      BASE_URL: ${BASE_URL}
+      RETURNS_INTERVAL: "2"
+      DELIVER_INTERVAL: "20"
+      RESULTS_INTERVAL: "20"

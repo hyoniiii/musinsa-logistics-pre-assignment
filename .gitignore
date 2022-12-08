@@ -1,0 +1,3 @@
+.env
+db/mongo-init.js/
+db/mongodb-data/
